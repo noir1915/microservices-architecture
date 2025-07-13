@@ -10,7 +10,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/noir1915/config_server_application.git
+          uri: https://github.com/noir1915/microservices-architecture.git
           clone-on-start: true
 
 logging:
