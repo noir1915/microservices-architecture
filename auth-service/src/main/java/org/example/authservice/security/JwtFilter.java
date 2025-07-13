@@ -33,7 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 username = jwtUtil.extractUsername(token);
             } catch (Exception e) {
-                // логика обработки ошибок (например, просроченный токен)
+
             }
         }
 

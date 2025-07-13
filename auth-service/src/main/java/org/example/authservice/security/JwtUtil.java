@@ -39,10 +39,10 @@ public class JwtUtil {
         Date expiryDate = new Date(expMillis);
 
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(String.valueOf(username))
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(secretKey)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 

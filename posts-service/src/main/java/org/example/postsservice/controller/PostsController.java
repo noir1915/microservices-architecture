@@ -6,6 +6,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.example.postsservice.config.AppConfig;
+import org.example.postsservice.dto.UserResponse;
 import org.example.postsservice.service.PostsService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -25,13 +29,17 @@ public class PostsController {
     @Value("${api.secret}")
     private String secret;
 
+    private final RestTemplate restTemplate;
+
     private final PostsService postsService;
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody Map<String, Object> body,
                                     HttpServletRequest request) {
 
-        Long userId = extractUserIdFromToken(request); // реализуйте извлечение из JWT
+        String username = extractUsernameFromToken(request);
+
+        Long userId = getUserIdByUsername(username);
 
         String content = (String) body.get("content");
 
@@ -41,18 +49,28 @@ public class PostsController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 
-    private Long extractUserIdFromToken(HttpServletRequest request) {
+    public Long getUserIdByUsername(String username) {
+        String url = "http://localhost:8082/api/users/username/" + username;
+        try {
+            UserResponse userResponse = restTemplate.getForObject(url, UserResponse.class);
+            if (userResponse != null && userResponse.getId() != null) {
+                return userResponse.getId();
+            } else {
+                throw new RuntimeException("Пользователь не найден");
+            }
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new RuntimeException("Пользователь с логином " + username + " не найден");
+        }
+    }
+
+    private String extractUsernameFromToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new RuntimeException("Missing or invalid Authorization header");
         }
         String token = authHeader.substring(7);
-
-        System.out.println("Token: " + token);
-        System.out.println("Secret: " + secret);
 
         try {
             Claims claims = Jwts.parser()
@@ -61,9 +79,7 @@ public class PostsController {
                     .parseClaimsJws(token)
                     .getBody();
 
-            System.out.println("Claims: " + claims);
-
-            return Long.parseLong(claims.getSubject());
+            return claims.getSubject(); // возвращает имя пользователя
         } catch (JwtException | IllegalArgumentException e) {
             e.printStackTrace();
             throw new RuntimeException("Invalid token");

@@ -24,7 +24,7 @@ public class PostsService {
 
     private final RestTemplate restTemplate;
 
-    public Post createPost(Long userId, String content) {
+    public void createPost(Long userId, String content) {
         if (content.length() > maxPostLength) {
             savePost(userId, content, false, "length");
             sendToAnalytics(userId, false, "length");
@@ -43,7 +43,6 @@ public class PostsService {
 
         Post post = savePost(userId, content, true, null);
         sendToAnalytics(userId, true, null);
-        return post;
     }
 
     public List<String> getAllForbiddenWords() {
