@@ -1,0 +1,18 @@
+server:
+  port: 8888
+
+spring:
+  profiles:
+    active: default
+  application:
+    name: config_server_application
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/noir1915/config_server_application.git
+          clone-on-start: true
+
+logging:
+  level:
+    org.springframework.cloud.config: DEBUG

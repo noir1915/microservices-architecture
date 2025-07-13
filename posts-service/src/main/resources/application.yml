@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: posts-service
+  datasource:
+    driverClassName: org.postgresql.Driver
+    #   url: jdbc:postgresql://db:5432/post_service_db
+    url: jdbc:postgresql://localhost:5432/post_service_db
+    username: postgres
+    password: root
+  cloud:
+    config:
+      uri: http://localhost:8888
+post:
+  max:
+    length: 25
+
+server:
+  port: 8084
