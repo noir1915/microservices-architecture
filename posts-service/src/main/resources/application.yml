@@ -17,5 +17,8 @@ post:
   max:
     length: 25
 
+api:
+  secret: your-very-long-base64-encoded-secret-key-of-at-least-32-bytes
+
 server:
   port: 8084

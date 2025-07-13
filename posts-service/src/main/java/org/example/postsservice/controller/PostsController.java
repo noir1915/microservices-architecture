@@ -1,10 +1,13 @@
 package org.example.postsservice.controller;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.postsservice.service.PostsService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +21,9 @@ import java.util.Map;
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostsController {
+
+    @Value("${api.secret}")
+    private String secret;
 
     private final PostsService postsService;
 
@@ -38,7 +44,6 @@ public class PostsController {
 
     }
 
-    // Создать пост - требует авторизации (JWT)
     private Long extractUserIdFromToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -46,12 +51,22 @@ public class PostsController {
         }
         String token = authHeader.substring(7);
 
-        Claims claims = Jwts.parser()
-                .setSigningKey("ваш_секретный_ключ".getBytes(StandardCharsets.UTF_8))
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        System.out.println("Token: " + token);
+        System.out.println("Secret: " + secret);
 
-        return Long.parseLong(claims.getSubject());
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            System.out.println("Claims: " + claims);
+
+            return Long.parseLong(claims.getSubject());
+        } catch (JwtException | IllegalArgumentException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Invalid token");
+        }
     }
 }

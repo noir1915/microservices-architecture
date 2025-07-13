@@ -1,7 +1,6 @@
 package org.example.postsservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.forbiddenwordsservice.model.service.ForbiddenWordsService;
 import org.example.postsservice.model.Post;
 import org.example.postsservice.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +22,7 @@ public class PostsService {
 
     final private PostRepository postRepository;
 
-    private final RestTemplate restTemplate; // для вызова аналитики
+    private final RestTemplate restTemplate;
 
     public Post createPost(Long userId, String content) {
         if (content.length() > maxPostLength) {
@@ -48,7 +47,7 @@ public class PostsService {
     }
 
     public List<String> getAllForbiddenWords() {
-        String url = "http://localhost:8085/api/forbidden-words"; // адрес вашего сервиса forbiddenwordsservice
+        String url = "http://localhost:8085/api/forbidden-words";
         String[] words = restTemplate.getForObject(url, String[].class);
         return Arrays.asList(words);
     }
