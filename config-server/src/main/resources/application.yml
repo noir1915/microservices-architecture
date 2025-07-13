@@ -12,6 +12,8 @@ spring:
         git:
           uri: https://github.com/noir1915/microservices-architecture.git
           clone-on-start: true
+          searchPaths:
+            - "config-server/src/main/resources/config-repo"
 
 logging:
   level:
