@@ -7,6 +7,7 @@ import org.example.analyticsservice.service.StatisticsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,7 +29,7 @@ public class StatisticsController {
                 userPostStatistics.getPublishedPosts(),
                 userPostStatistics.getRejectedPosts(),
                 userPostStatistics.getRejectionReasonsCount(),
-                userPostStatistics.getForbiddenWordsCount()
+                (List<String>) userPostStatistics.getForbiddenWordsCount()
         ))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 

@@ -12,6 +12,6 @@ import lombok.Setter;
 public class PostData {
     private Long userId;
     private boolean published;
-    private String rejectionReason;
     private String content;
+    private String rejectionReason;
 }

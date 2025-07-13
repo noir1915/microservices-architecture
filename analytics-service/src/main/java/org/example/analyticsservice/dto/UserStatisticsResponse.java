@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -13,10 +14,10 @@ import java.util.Map;
 @NoArgsConstructor
 public class UserStatisticsResponse {
 
-    private Long id;
+    private Long userId;
     private int totalPosts;
     private int publishedPosts;
     private int rejectedPosts;
     private Map<String, Integer> rejectionReasonsCount;
-    private Map<String, Integer> forbiddenWordsCount;
+    private List<String> topForbiddenWords;
 }
