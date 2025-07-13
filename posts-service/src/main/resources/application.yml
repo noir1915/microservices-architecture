@@ -7,6 +7,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/post_service_db
     username: postgres
     password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
   cloud:
     config:
       uri: http://localhost:8888

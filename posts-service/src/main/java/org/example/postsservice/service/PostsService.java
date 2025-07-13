@@ -1,6 +1,7 @@
 package org.example.postsservice.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.postsservice.model.Post;
 import org.example.postsservice.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostsService {
@@ -25,6 +27,7 @@ public class PostsService {
     private final RestTemplate restTemplate;
 
     public void createPost(Long userId, String content) {
+        log.info("Создаю пост для userId: {}, content: {}", userId, content);
         if (content.length() > maxPostLength) {
             savePost(userId, content, false, "length");
             sendToAnalytics(userId, false, "length");
@@ -42,6 +45,7 @@ public class PostsService {
         }
 
         Post post = savePost(userId, content, true, null);
+        log.info("Пост успешно сохранён с id: {}", post.getId());
         sendToAnalytics(userId, true, null);
     }
 
